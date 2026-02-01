@@ -2,7 +2,7 @@
   "type": "module",
   "name": "@hazae41/clade",
   "version": "0.2.8",
-  "description": "BIP-32 and SLIP-0010 derivation for TypeScript",
+  "description": "Wallet derivation (BIP-32, SLIP-0010, XMR) for TypeScript",
   "homepage": "https://github.com/hazae41/clade",
   "repository": "github:hazae41/clade",
   "author": "hazae41",

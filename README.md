@@ -1,6 +1,6 @@
 # Clade
 
-BIP-32 and SLIP-0010 derivation for TypeScript
+Wallet derivation (BIP-32, SLIP-0010, XMR) for TypeScript
 
 ```bash
 npm install @hazae41/clade
