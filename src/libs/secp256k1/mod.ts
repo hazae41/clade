@@ -1,0 +1,6 @@
+export namespace secp256k1 {
+
+  export const order = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141n
+
+}
+
