@@ -5,7 +5,8 @@
   "lint": {
     "rules": {
       "exclude": [
-        "no-namespace"
+        "no-namespace",
+        "require-await"
       ]
     }
   }

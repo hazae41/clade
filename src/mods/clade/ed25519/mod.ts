@@ -1,3 +1,5 @@
+/// <reference types="@/libs/bytes/lib.d.ts" />
+
 import { Lengthed } from "@/libs/lengthed/mod.ts";
 import { Cursor } from "@hazae41/cursor";
 

@@ -1,3 +1,5 @@
+/// <reference types="@/libs/bytes/lib.d.ts" />
+
 import { Lengthed } from "@/libs/lengthed/mod.ts";
 import * as secp256k1 from "@/libs/secp256k1/mod.ts";
 import { Cursor } from "@hazae41/cursor";
