@@ -7,6 +7,10 @@ export class Ed25519SeedKey {
     readonly seed: Uint8Array<ArrayBuffer>
   ) { }
 
+  /**
+   * Generate the master private key using SLIP-0010 (~BIP-32)
+   * @returns master private key
+   */
   async generate() {
     const alg = { name: "HMAC", hash: "SHA-512" }
     const ref = await crypto.subtle.importKey("raw", new TextEncoder().encode("ed25519 seed"), alg, false, ["sign"])
@@ -19,6 +23,11 @@ export class Ed25519SeedKey {
     return new Ed25519ExtendedPrivateKey(key, ext)
   }
 
+  /**
+   * Derive recursively to the child private key at the BIP-44 path
+   * @param path 
+   * @returns child private key
+   */
   async derive(path: string) {
     let derived = await this.generate()
 
@@ -46,6 +55,11 @@ export class Ed25519ExtendedPrivateKey {
     readonly ext: Uint8Array<ArrayBuffer> & Lengthed<32>,
   ) { }
 
+  /**
+   * Derive the child private key at index using SLIP-0010 (~BIP-32)
+   * @param index 
+   * @returns child private key
+   */
   async derive(index: number) {
     const alg = { name: "HMAC", hash: "SHA-512" }
     const ref = await crypto.subtle.importKey("raw", this.ext, alg, false, ["sign"])

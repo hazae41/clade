@@ -8,6 +8,10 @@ export class BitcoinSeedKey {
     readonly seed: Uint8Array<ArrayBuffer>
   ) { }
 
+  /**
+   * Generate the master private key using SLIP-0010 (~BIP-32)
+   * @returns master private key
+   */
   async generate() {
     let input = this.seed
 
@@ -33,6 +37,29 @@ export class BitcoinSeedKey {
     }
   }
 
+  /**
+   * Derive recursively to the child private key at the BIP-44 path
+   * @param path 
+   * @returns child private key
+   */
+  async derive(path: string) {
+    let derived = await this.generate()
+
+    for (const segment of path.matchAll(/\/([0-9]+)('?)/g)) {
+      let index = Number(segment[1])
+
+      if (index > 2 ** 32)
+        throw new Error("Index out of bounds")
+
+      if (segment[2] === "'")
+        index += 2 ** 31
+
+      derived = await derived.derive(index)
+    }
+
+    return derived
+  }
+
 }
 
 export class BitcoinExtendedPrivateKey {
@@ -42,6 +69,10 @@ export class BitcoinExtendedPrivateKey {
     readonly ext: Uint8Array<ArrayBuffer> & Lengthed<32>,
   ) { }
 
+  /**
+   * Get the public key
+   * @returns public key
+   */
   publish() {
     const key = secp256k1.getPublicKey(this.key, true) as Uint8Array<ArrayBuffer> & Lengthed<33>
     const ext = this.ext
@@ -49,6 +80,11 @@ export class BitcoinExtendedPrivateKey {
     return new BitcoinExtendedPublicKey(key, ext)
   }
 
+  /**
+   * Derive the child private key at index using SLIP-0010 (~BIP-32)
+   * @param index 
+   * @returns child private key
+   */
   async derive(index: number) {
     const alg = { name: "HMAC", hash: "SHA-512" }
     const ref = await crypto.subtle.importKey("raw", this.ext, alg, false, ["sign"])
@@ -112,6 +148,11 @@ export class BitcoinExtendedPublicKey {
     readonly ext: Uint8Array<ArrayBuffer> & Lengthed<32>,
   ) { }
 
+  /**
+   * Derive the child public key at index using SLIP-0010 (~BIP-32)
+   * @param index 
+   * @returns child public key
+   */
   async derive(index: number) {
     const alg = { name: "HMAC", hash: "SHA-512" }
     const ref = await crypto.subtle.importKey("raw", this.ext, alg, false, ["sign"])
