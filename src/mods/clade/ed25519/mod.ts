@@ -35,7 +35,7 @@ export class Ed25519ExtendedPrivateKey {
     const input = new Uint8Array(1 + 32 + 4)
 
     if (index < (2 ** 31)) {
-      throw new Error("Only hardened derivation is supported")
+      throw new Error("Only Ed25519 hardened derivation is supported")
     } else {
       const cursor = new Cursor(input)
       cursor.writeUint8OrThrow(0)
