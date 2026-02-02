@@ -15,6 +15,7 @@ npm install @hazae41/clade
 - No external dependencies
 - Rust-like patterns
 - Uses WebCrypto
+- BIP-32, BIP-44, SLIP-0010
 
 ## Usage
 
