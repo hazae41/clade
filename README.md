@@ -18,6 +18,8 @@ npm install @hazae41/clade
 
 ## Usage
 
+### BIP-32
+
 ```tsx
 const seed = new BitcoinSeed(...)
 
@@ -25,5 +27,37 @@ const master = await seed.generate()
 
 const child = await master.derive(123)
 
-const myPrivateKey = child.data
+console.log(child.key.toHex())
+```
+
+### BIP-32 + BIP-44
+
+```tsx
+const seed = new BitcoinSeed(...)
+
+const child = await seed.derive("m/44'/0/0'/0/0")
+
+console.log(child.key.toHex())
+```
+
+### SLIP-0010
+
+```tsx
+const seed = new Ed25519Seed(...)
+
+const master = await seed.generate()
+
+const child = await master.derive(123)
+
+console.log(child.key.toHex())
+```
+
+### SLIP-0010 + BIP-44
+
+```tsx
+const seed = new Ed25519Seed(...)
+
+const child = await seed.derive("m/44'/0/0'/0/0")
+
+console.log(child.key.toHex())
 ```
