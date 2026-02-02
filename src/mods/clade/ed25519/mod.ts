@@ -19,6 +19,24 @@ export class Ed25519SeedKey {
     return new Ed25519ExtendedPrivateKey(key, ext)
   }
 
+  async derive(path: string) {
+    let derived = await this.generate()
+
+    for (const segment of path.matchAll(/\/([0-9]+)('?)/g)) {
+      let index = Number(segment[1])
+
+      if (index > 2 ** 32)
+        throw new Error("Index out of bounds")
+
+      if (segment[2] === "'")
+        index += 2 ** 31
+
+      derived = await derived.derive(index)
+    }
+
+    return derived
+  }
+
 }
 
 export class Ed25519ExtendedPrivateKey {
