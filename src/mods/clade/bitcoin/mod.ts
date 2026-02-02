@@ -42,6 +42,13 @@ export class BitcoinExtendedPrivateKey {
     readonly ext: Uint8Array<ArrayBuffer> & Lengthed<32>,
   ) { }
 
+  publish() {
+    const key = secp256k1.getPublicKey(this.key, true) as Uint8Array<ArrayBuffer> & Lengthed<33>
+    const ext = this.ext
+
+    return new BitcoinExtendedPublicKey(key, ext)
+  }
+
   async derive(index: number) {
     const alg = { name: "HMAC", hash: "SHA-512" }
     const ref = await crypto.subtle.importKey("raw", this.ext, alg, false, ["sign"])
@@ -65,10 +72,9 @@ export class BitcoinExtendedPrivateKey {
       const l = sig.slice(0, 32) as Uint8Array<ArrayBuffer> & Lengthed<32>
       const r = sig.slice(32, 64) as Uint8Array<ArrayBuffer> & Lengthed<32>
 
-      const x = BigInt("0x" + l.toHex())
-      const y = BigInt("0x" + this.key.toHex())
+      const i = BigInt("0x" + l.toHex())
 
-      if (x >= secp256k1.order) {
+      if (i >= secp256k1.order) {
         const cursor = new Cursor(input)
         cursor.writeUint8OrThrow(1)
         cursor.writeOrThrow(l)
@@ -77,6 +83,8 @@ export class BitcoinExtendedPrivateKey {
         continue
       }
 
+      const x = i
+      const y = BigInt("0x" + this.key.toHex())
       const z = (x + y) % secp256k1.order
 
       if (z === 0n) {
@@ -92,6 +100,66 @@ export class BitcoinExtendedPrivateKey {
       const ext = r
 
       return new BitcoinExtendedPrivateKey(key, ext)
+    }
+  }
+
+}
+
+export class BitcoinExtendedPublicKey {
+
+  constructor(
+    readonly key: Uint8Array<ArrayBuffer> & Lengthed<33>,
+    readonly ext: Uint8Array<ArrayBuffer> & Lengthed<32>,
+  ) { }
+
+  async derive(index: number) {
+    const alg = { name: "HMAC", hash: "SHA-512" }
+    const ref = await crypto.subtle.importKey("raw", this.ext, alg, false, ["sign"])
+
+    const input = new Uint8Array(33 + 4)
+
+    if (index < (2 ** 31)) {
+      const cursor = new Cursor(input)
+      cursor.writeOrThrow(this.key)
+      cursor.writeUint32OrThrow(index)
+    } else {
+      throw new Error("Cannot do hardened derivation from public key")
+    }
+
+    while (true) {
+      const sig = new Uint8Array(await crypto.subtle.sign(alg, ref, input))
+
+      const l = sig.slice(0, 32) as Uint8Array<ArrayBuffer> & Lengthed<32>
+      const r = sig.slice(32, 64) as Uint8Array<ArrayBuffer> & Lengthed<32>
+
+      const i = BigInt("0x" + l.toHex())
+
+      if (i >= secp256k1.order) {
+        const cursor = new Cursor(input)
+        cursor.writeUint8OrThrow(1)
+        cursor.writeOrThrow(l)
+        cursor.writeUint32OrThrow(index)
+
+        continue
+      }
+
+      const x = secp256k1.Point.BASE.multiply(i)
+      const y = secp256k1.Point.fromBytes(this.key)
+      const z = x.add(y)
+
+      if (z.is0()) {
+        const cursor = new Cursor(input)
+        cursor.writeUint8OrThrow(1)
+        cursor.writeOrThrow(l)
+        cursor.writeUint32OrThrow(index)
+
+        continue
+      }
+
+      const key = z.toBytes(true) as Uint8Array<ArrayBuffer> & Lengthed<33>
+      const ext = r
+
+      return new BitcoinExtendedPublicKey(key, ext)
     }
   }
 
