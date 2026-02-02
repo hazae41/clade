@@ -1,8 +1,8 @@
 /// <reference types="@/libs/bytes/lib.d.ts" />
 
 import { Lengthed } from "@/libs/lengthed/mod.ts";
-import * as secp256k1 from "@/libs/secp256k1/mod.ts";
 import { Cursor } from "@hazae41/cursor";
+import { secp256k1 } from "@noble/curves/secp256k1.js";
 
 export class BitcoinSeedKey {
 
@@ -32,7 +32,7 @@ export class BitcoinSeedKey {
 
       if (x === 0n)
         continue
-      if (x >= secp256k1.order)
+      if (x >= secp256k1.Point.Fn.ORDER)
         continue
 
       return new BitcoinExtendedPrivateKey(key, ext)
@@ -112,7 +112,7 @@ export class BitcoinExtendedPrivateKey {
 
       const i = BigInt("0x" + l.toHex())
 
-      if (i >= secp256k1.order) {
+      if (i >= secp256k1.Point.Fn.ORDER) {
         const cursor = new Cursor(input)
         cursor.writeUint8OrThrow(1)
         cursor.writeOrThrow(l)
@@ -123,7 +123,7 @@ export class BitcoinExtendedPrivateKey {
 
       const x = i
       const y = BigInt("0x" + this.key.toHex())
-      const z = (x + y) % secp256k1.order
+      const z = (x + y) % secp256k1.Point.Fn.ORDER
 
       if (z === 0n) {
         const cursor = new Cursor(input)
@@ -177,7 +177,7 @@ export class BitcoinExtendedPublicKey {
 
       const i = BigInt("0x" + l.toHex())
 
-      if (i >= secp256k1.order) {
+      if (i >= secp256k1.Point.Fn.ORDER) {
         const cursor = new Cursor(input)
         cursor.writeUint8OrThrow(1)
         cursor.writeOrThrow(l)
