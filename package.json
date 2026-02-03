@@ -20,26 +20,14 @@
     }
   },
   "devDependencies": {
-    "@hazae41/argon2-wasm": "^2.0.0",
-    "@hazae41/chacha20poly1305-wasm": "^2.0.0",
     "@hazae41/phobos": "^2.0.16",
     "@hazae41/tscousin": "^1.0.28",
     "@types/node": "^25.0.3",
     "deno": "^2.6.3",
-    "happy-dom": "^20.0.11",
     "typescript": "^5.9.3"
   },
   "keywords": [
     "bip32",
-    "result",
-    "rust",
-    "data",
-    "error",
-    "catching",
-    "ok",
-    "err",
-    "unwrap",
-    "wrap",
     "typescript",
     "esmodules",
     "tested",
