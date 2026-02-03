@@ -1,3 +1,5 @@
+/// <reference types="@/libs/bytes/lib.d.ts" />
+
 import { Lengthed } from "@/libs/lengthed/mod.ts";
 import { assert, test } from "@hazae41/phobos";
 import { Ed25519ExtendedPrivateKey, Ed25519SeedKey } from "./mod.ts";
