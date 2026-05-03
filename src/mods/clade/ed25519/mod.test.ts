@@ -1,12 +1,9 @@
-/// <reference types="@/libs/bytes/lib.d.ts" />
-
-import { Lengthed } from "@/libs/lengthed/mod.ts";
 import { assert, test } from "@hazae41/phobos";
 import { Ed25519ExtendedPrivateKey, Ed25519SeedKey } from "./mod.ts";
 
 namespace ed25519 {
 
-  export async function publish(key: Uint8Array<ArrayBuffer> & Lengthed<32>) {
+  export async function publish(key: Uint8Array<ArrayBuffer>) {
     const asn = new Uint8Array([48, 46, 2, 1, 0, 48, 5, 6, 3, 43, 101, 112, 4, 34, 4, 32])
 
     const sigkeyraw = key
@@ -22,7 +19,7 @@ namespace ed25519 {
     delete sigkeyjwk.key_ops
 
     const pubkeyref = await crypto.subtle.importKey("jwk", sigkeyjwk, { name: "Ed25519" }, true, ["verify"])
-    const pubkeyraw = new Uint8Array(await crypto.subtle.exportKey("raw", pubkeyref)) as Uint8Array<ArrayBuffer> & Lengthed<32>
+    const pubkeyraw = new Uint8Array(await crypto.subtle.exportKey("raw", pubkeyref))
 
     return pubkeyraw
   }

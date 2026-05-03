@@ -1,6 +1,3 @@
-/// <reference types="@/libs/bytes/lib.d.ts" />
-
-import { Lengthed } from "@/libs/lengthed/mod.ts";
 import { Cursor } from "@hazae41/cursor";
 import { secp256k1 } from "@noble/curves/secp256k1.js";
 
@@ -23,8 +20,8 @@ export class BitcoinSeedKey {
     while (true) {
       const sig = new Uint8Array(await crypto.subtle.sign(alg, ref, input))
 
-      const key = sig.slice(0, 32) as Uint8Array<ArrayBuffer> & Lengthed<32>
-      const ext = sig.slice(32, 64) as Uint8Array<ArrayBuffer> & Lengthed<32>
+      const key = sig.slice(0, 32)
+      const ext = sig.slice(32, 64)
 
       input = key
 
@@ -67,8 +64,8 @@ export class BitcoinSeedKey {
 export class BitcoinExtendedPrivateKey {
 
   constructor(
-    readonly key: Uint8Array<ArrayBuffer> & Lengthed<32>,
-    readonly ext: Uint8Array<ArrayBuffer> & Lengthed<32>,
+    readonly key: Uint8Array<ArrayBuffer>,
+    readonly ext: Uint8Array<ArrayBuffer>,
   ) { }
 
   /**
@@ -76,7 +73,7 @@ export class BitcoinExtendedPrivateKey {
    * @returns public key
    */
   publish() {
-    const key = secp256k1.getPublicKey(this.key, true) as Uint8Array<ArrayBuffer> & Lengthed<33>
+    const key = new Uint8Array(secp256k1.getPublicKey(this.key, true))
     const ext = this.ext
 
     return new BitcoinExtendedPublicKey(key, ext)
@@ -107,8 +104,8 @@ export class BitcoinExtendedPrivateKey {
     while (true) {
       const sig = new Uint8Array(await crypto.subtle.sign(alg, ref, input))
 
-      const l = sig.slice(0, 32) as Uint8Array<ArrayBuffer> & Lengthed<32>
-      const r = sig.slice(32, 64) as Uint8Array<ArrayBuffer> & Lengthed<32>
+      const l = sig.slice(0, 32)
+      const r = sig.slice(32, 64)
 
       const i = BigInt("0x" + l.toHex())
 
@@ -134,7 +131,7 @@ export class BitcoinExtendedPrivateKey {
         continue
       }
 
-      const key = Uint8Array.fromHex(z.toString(16).padStart(64, "0")) as Uint8Array<ArrayBuffer> & Lengthed<32>
+      const key = Uint8Array.fromHex(z.toString(16).padStart(64, "0"))
       const ext = r
 
       return new BitcoinExtendedPrivateKey(key, ext)
@@ -146,8 +143,8 @@ export class BitcoinExtendedPrivateKey {
 export class BitcoinExtendedPublicKey {
 
   constructor(
-    readonly key: Uint8Array<ArrayBuffer> & Lengthed<33>,
-    readonly ext: Uint8Array<ArrayBuffer> & Lengthed<32>,
+    readonly key: Uint8Array<ArrayBuffer>,
+    readonly ext: Uint8Array<ArrayBuffer>,
   ) { }
 
   /**
@@ -172,8 +169,8 @@ export class BitcoinExtendedPublicKey {
     while (true) {
       const sig = new Uint8Array(await crypto.subtle.sign(alg, ref, input))
 
-      const l = sig.slice(0, 32) as Uint8Array<ArrayBuffer> & Lengthed<32>
-      const r = sig.slice(32, 64) as Uint8Array<ArrayBuffer> & Lengthed<32>
+      const l = sig.slice(0, 32)
+      const r = sig.slice(32, 64)
 
       const i = BigInt("0x" + l.toHex())
 
@@ -199,7 +196,7 @@ export class BitcoinExtendedPublicKey {
         continue
       }
 
-      const key = z.toBytes(true) as Uint8Array<ArrayBuffer> & Lengthed<33>
+      const key = new Uint8Array(z.toBytes(true))
       const ext = r
 
       return new BitcoinExtendedPublicKey(key, ext)

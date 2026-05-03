@@ -1,6 +1,3 @@
-/// <reference types="@/libs/bytes/lib.d.ts" />
-
-import { Lengthed } from "@/libs/lengthed/mod.ts";
 import { Cursor } from "@hazae41/cursor";
 
 export class Ed25519SeedKey {
@@ -19,8 +16,8 @@ export class Ed25519SeedKey {
 
     const sig = new Uint8Array(await crypto.subtle.sign(alg, ref, this.seed))
 
-    const key = sig.slice(0, 32) as Uint8Array<ArrayBuffer> & Lengthed<32>
-    const ext = sig.slice(32, 64) as Uint8Array<ArrayBuffer> & Lengthed<32>
+    const key = sig.slice(0, 32)
+    const ext = sig.slice(32, 64)
 
     return new Ed25519ExtendedPrivateKey(key, ext)
   }
@@ -53,8 +50,8 @@ export class Ed25519SeedKey {
 export class Ed25519ExtendedPrivateKey {
 
   constructor(
-    readonly key: Uint8Array<ArrayBuffer> & Lengthed<32>,
-    readonly ext: Uint8Array<ArrayBuffer> & Lengthed<32>,
+    readonly key: Uint8Array<ArrayBuffer>,
+    readonly ext: Uint8Array<ArrayBuffer>,
   ) { }
 
   /**
@@ -80,8 +77,8 @@ export class Ed25519ExtendedPrivateKey {
     while (true) {
       const sig = new Uint8Array(await crypto.subtle.sign(alg, ref, input))
 
-      const key = sig.slice(0, 32) as Uint8Array<ArrayBuffer> & Lengthed<32>
-      const ext = sig.slice(32, 64) as Uint8Array<ArrayBuffer> & Lengthed<32>
+      const key = sig.slice(0, 32)
+      const ext = sig.slice(32, 64)
 
       return new Ed25519ExtendedPrivateKey(key, ext)
     }
