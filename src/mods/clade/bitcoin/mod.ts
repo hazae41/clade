@@ -1,5 +1,5 @@
 import { Cursor } from "@hazae41/cursor";
-import { secp256k1 } from "@noble/curves/secp256k1.js";
+import { secp256k1 } from "@hazae41/secp256k1";
 
 export class BitcoinSeedKey {
 
@@ -29,7 +29,7 @@ export class BitcoinSeedKey {
 
       if (x === 0n)
         continue
-      if (x >= secp256k1.Point.Fn.ORDER)
+      if (x >= secp256k1.Curve.order)
         continue
 
       return new BitcoinExtendedPrivateKey(key, ext)
@@ -73,7 +73,7 @@ export class BitcoinExtendedPrivateKey {
    * @returns public key
    */
   publish() {
-    const key = new Uint8Array(secp256k1.getPublicKey(this.key, true))
+    const key = secp256k1.SecretKey.import(this.key).publish().export(true)
     const ext = this.ext
 
     return new BitcoinExtendedPublicKey(key, ext)
@@ -92,7 +92,7 @@ export class BitcoinExtendedPrivateKey {
 
     if (index < (2 ** 31)) {
       const cursor = new Cursor(input)
-      cursor.writeOrThrow(secp256k1.getPublicKey(this.key, true))
+      cursor.writeOrThrow(secp256k1.SecretKey.import(this.key).publish().export(true))
       cursor.writeUint32OrThrow(index)
     } else {
       const cursor = new Cursor(input)
@@ -109,7 +109,7 @@ export class BitcoinExtendedPrivateKey {
 
       const i = BigInt("0x" + l.toHex())
 
-      if (i >= secp256k1.Point.Fn.ORDER) {
+      if (i >= secp256k1.Curve.order) {
         const cursor = new Cursor(input)
         cursor.writeUint8OrThrow(1)
         cursor.writeOrThrow(l)
@@ -120,7 +120,7 @@ export class BitcoinExtendedPrivateKey {
 
       const x = i
       const y = BigInt("0x" + this.key.toHex())
-      const z = (x + y) % secp256k1.Point.Fn.ORDER
+      const z = (x + y) % secp256k1.Curve.order
 
       if (z === 0n) {
         const cursor = new Cursor(input)
@@ -174,7 +174,7 @@ export class BitcoinExtendedPublicKey {
 
       const i = BigInt("0x" + l.toHex())
 
-      if (i >= secp256k1.Point.Fn.ORDER) {
+      if (i >= secp256k1.Curve.order) {
         const cursor = new Cursor(input)
         cursor.writeUint8OrThrow(1)
         cursor.writeOrThrow(l)
@@ -183,11 +183,11 @@ export class BitcoinExtendedPublicKey {
         continue
       }
 
-      const x = secp256k1.Point.BASE.multiply(i)
-      const y = secp256k1.Point.fromBytes(this.key)
+      const x = secp256k1.Point.generator.mul(i)
+      const y = secp256k1.PublicKey.import(this.key).downcast()
       const z = x.add(y)
 
-      if (z.is0()) {
+      if (z.identity) {
         const cursor = new Cursor(input)
         cursor.writeUint8OrThrow(1)
         cursor.writeOrThrow(l)
@@ -196,7 +196,7 @@ export class BitcoinExtendedPublicKey {
         continue
       }
 
-      const key = new Uint8Array(z.toBytes(true))
+      const key = new Uint8Array(z.upcast().export(true))
       const ext = r
 
       return new BitcoinExtendedPublicKey(key, ext)

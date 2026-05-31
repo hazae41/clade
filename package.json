@@ -35,6 +35,6 @@
   ],
   "dependencies": {
     "@hazae41/cursor": "^2.1.4",
-    "@noble/curves": "^2.2.0"
+    "@hazae41/secp256k1": "^2.0.5"
   }
 }
