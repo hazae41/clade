@@ -69,9 +69,9 @@ export class Ed25519ExtendedPrivateKey {
       throw new Error("Only Ed25519 hardened derivation is supported")
     } else {
       const cursor = new Cursor(input)
-      cursor.writeUint8OrThrow(0)
-      cursor.writeOrThrow(this.key)
-      cursor.writeUint32OrThrow(index)
+      cursor.writeUint8(0)
+      cursor.write(this.key)
+      cursor.writeUint32(index)
     }
 
     while (true) {

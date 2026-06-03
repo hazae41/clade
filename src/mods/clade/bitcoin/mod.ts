@@ -92,13 +92,13 @@ export class BitcoinExtendedPrivateKey {
 
     if (index < (2 ** 31)) {
       const cursor = new Cursor(input)
-      cursor.writeOrThrow(secp256k1.SecretKey.import(this.key).publish().export(true))
-      cursor.writeUint32OrThrow(index)
+      cursor.write(secp256k1.SecretKey.import(this.key).publish().export(true))
+      cursor.writeUint32(index)
     } else {
       const cursor = new Cursor(input)
-      cursor.writeUint8OrThrow(0)
-      cursor.writeOrThrow(this.key)
-      cursor.writeUint32OrThrow(index)
+      cursor.writeUint8(0)
+      cursor.write(this.key)
+      cursor.writeUint32(index)
     }
 
     while (true) {
@@ -111,9 +111,9 @@ export class BitcoinExtendedPrivateKey {
 
       if (i >= secp256k1.Curve.order) {
         const cursor = new Cursor(input)
-        cursor.writeUint8OrThrow(1)
-        cursor.writeOrThrow(l)
-        cursor.writeUint32OrThrow(index)
+        cursor.writeUint8(1)
+        cursor.write(l)
+        cursor.writeUint32(index)
 
         continue
       }
@@ -124,9 +124,9 @@ export class BitcoinExtendedPrivateKey {
 
       if (z === 0n) {
         const cursor = new Cursor(input)
-        cursor.writeUint8OrThrow(1)
-        cursor.writeOrThrow(l)
-        cursor.writeUint32OrThrow(index)
+        cursor.writeUint8(1)
+        cursor.write(l)
+        cursor.writeUint32(index)
 
         continue
       }
@@ -160,8 +160,8 @@ export class BitcoinExtendedPublicKey {
 
     if (index < (2 ** 31)) {
       const cursor = new Cursor(input)
-      cursor.writeOrThrow(this.key)
-      cursor.writeUint32OrThrow(index)
+      cursor.write(this.key)
+      cursor.writeUint32(index)
     } else {
       throw new Error("Cannot do hardened derivation from public key")
     }
@@ -176,9 +176,9 @@ export class BitcoinExtendedPublicKey {
 
       if (i >= secp256k1.Curve.order) {
         const cursor = new Cursor(input)
-        cursor.writeUint8OrThrow(1)
-        cursor.writeOrThrow(l)
-        cursor.writeUint32OrThrow(index)
+        cursor.writeUint8(1)
+        cursor.write(l)
+        cursor.writeUint32(index)
 
         continue
       }
@@ -189,9 +189,9 @@ export class BitcoinExtendedPublicKey {
 
       if (z.identity) {
         const cursor = new Cursor(input)
-        cursor.writeUint8OrThrow(1)
-        cursor.writeOrThrow(l)
-        cursor.writeUint32OrThrow(index)
+        cursor.writeUint8(1)
+        cursor.write(l)
+        cursor.writeUint32(index)
 
         continue
       }

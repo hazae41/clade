@@ -1,3 +1,6 @@
+
+// deno-lint-ignore-file
+
 import { assert, test } from "@hazae41/phobos";
 import { Ed25519ExtendedPrivateKey, Ed25519SeedKey } from "./mod.ts";
 

@@ -22,8 +22,8 @@
   "devDependencies": {
     "@hazae41/phobos": "^2.0.16",
     "@hazae41/tscousin": "^1.0.28",
-    "@types/node": "^25.6.0",
-    "deno": "^2.7.14",
+    "@types/node": "^25.9.1",
+    "deno": "^2.8.1",
     "typescript": "^6.0.3"
   },
   "keywords": [
@@ -34,7 +34,7 @@
     "unit-tested"
   ],
   "dependencies": {
-    "@hazae41/cursor": "^2.1.4",
+    "@hazae41/cursor": "^2.2.0",
     "@hazae41/secp256k1": "^2.0.5"
   }
 }
