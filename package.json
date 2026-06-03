@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@hazae41/clade",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Account derivation (BIP-32, SLIP-0010) for TypeScript",
   "homepage": "https://github.com/hazae41/clade",
   "repository": "github:hazae41/clade",
